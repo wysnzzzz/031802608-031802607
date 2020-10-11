@@ -1,0 +1,37 @@
+.tch {
+    font-size: 30px;
+    color: black;
+}
+    .tch:hover {
+        font-size: 35px;
+        color:chartreuse;
+        transition-duration: 300ms;
+        transition-delay: 200ms;
+    }
+    .Tag {
+        font-size: 25px;
+        color: orange;
+    }
+    .Tag:hover {
+        color: aqua;
+        transition-duration: 2000ms;
+    }
+.stu {
+    font-size: 22px;
+    color:cyan;
+}
+    .stu:hover {
+        font-size: 27px;
+        color:gold;
+        transition-duration: 600ms;
+    }
+    .backgraph {
+        background-image: url(456.jpg);
+        background-repeat: repeat;
+    }
+
+    .textbox {
+        opacity: 0.7;
+        border: 0;
+        color:green;
+    }
