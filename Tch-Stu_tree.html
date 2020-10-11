@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>MasterTree</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    <script type="text/javascript">
+        function Skill(name = "skill") {                  //Skill构建函数-学生
+            this.name = name;
+        }
+        function Student(name = "student") {                  //Student构建函数-学生
+            this.name = name;
+            this.skill = new Array();
+            this.show = false;
+        }
+        function Tag(name = "tag") {                          //Tag构建函数-标签
+            this.name = name;
+            this.list = new Array();
+            this.show = false;
+        }
+        function Teacher(name = "teacher") {                  //Teacher构建函数-导师
+            this.name = name;
+            this.studentTag = new Array();
+            this.show = false;
+        }
+        function DisplayList(ListArr) {                      //输出学生列表
+            var i = 0;
+            var StdOut_Front = "<a class='stu'>";        //输出特效在这里改，如果你懂的话
+            //var StdOut_Mid = ") '>";
+            var StdOut_Back = "</a>";
+            var str = "";
+            while (i < ListArr.length) {
+                str += StdOut_Front + ListArr[i++].name + StdOut_Back;
+                if (i != ListArr.length) str += "，";                     //输出学生姓名，使用‘，’隔开
+            }
+            str += "<br>";
+            return str;             //需要打印的信息都存在str字符串里
+        }
+        function Click_Student(a,i,j,k)
+        {
+            a[i].studentTag[j].Student[k].show = !a[i].studentTag[j].Student[k].show
+            ptr_obj = a;
+            DisplayTable(a);
+        }
+        function Click_Tag(a, i, j) {                 //鼠标点到了标签就修改标签展开状态
+            a[i].studentTag[j].show = !a[i].studentTag[j].show;
+            ptr_obj = a;            //改变a表的状态并输出a表  //这里的a表就是树
+            DisplayTable(a);
+        }
+        function DisplayTag(a, i) {                                     //显示标签表
+            ptr_obj = a;
+            var StdOut_Front = "<a class ='Tag' onclick='Click_Tag(";          //特效就像这样 用class加进去，改掉所用的class输出就会变化，这里只会改到标签
+            var StdOut_Mid = ") '>";
+            var StdOut_Back = "</a>";
+            var str = "";
+            var j = 0;
+            while (j < a[i].studentTag.length) {
+                str += StdOut_Front + JSON.stringify(a) + "," + i + "," + j + StdOut_Mid + a[i].studentTag[j].name + StdOut_Back;
+                if (a[i].studentTag[j].show == true) {
+                    str += " : ";                                   //标签和学生姓名之间隔了一个 ‘:’
+                    str += DisplayList(a[i].studentTag[j].list);
+                }
+                else str += "<br>";         //如果不输出学生列表，就换行   这是两个标签中间的
+                j++;
+            }
+            str += "<br>";                  //输出完所有的标签，再换一行
+            return str;
+        }
+        function Click_teacher(a, i) {      //鼠标点到了导师姓名就修改标签展开状态
+            a[i].show = !a[i].show;
+            ptr_obj = a;
+            DisplayTable(a);
+        }
+        function DisplayTable(arr) {                        //输出导师表     即树
+            var i = 0;
+            ptr_obj = arr;
+            var StdOut_Front = "<a class ='tch' onclick='Click_teacher(";            //特效在class里改，这里只会改到导师
+            var StdOut_Mid = ") '>";
+            var StdOut_Back = "</a>";
+            var str = "";
+            while (i < arr.length) {
+                //document.write(arr.name);
+                str += StdOut_Front + JSON.stringify(arr) + "," + i + StdOut_Mid + arr[i].name + StdOut_Back;
+                str += "<br>";                  //输出换行 导师名独占一行
+                if (arr[i].show == true) {
+                    str += DisplayTag(arr, i);
+                }
+                i++;
+            }
+            document.getElementById('html').innerHTML = str;    //将html里内容改为str。或者说将str输出到html网页
+        }
+        function check_tch(str, i) {                  //在str【i】这里检查输入的字符串内容是否为“导师：”
+            var j = 0;
+            var daoshi = "导师";
+            var sign1 = ":", sign2 = "：";
+            while (j < 2) {
+                if (str[i + j] != daoshi[j]) return false;
+                j++;
+            }
+            if (str[i + j] != sign1 && str[i + j] != sign2) return false;
+            return true;
+        }
+        function check_tag(str, i) {                //在str【i】这里检查输入的字符串是否为标签格式
+            if (str[i] == '\n')++i;
+            if (str[i] == undefined) return false;
+            if (str[i-2] == '\n') return false;
+            var tagname = "";
+            while (str[i] != ":" && str[i] != "：" && str[i] != "," && str[i] != "，" && str[i] != "、" && str[i] != "\n" && str[i] != undefined) {
+                tagname += str[i++];
+            }
+            var tg = new Tag(tagname);          //从输入中提取出的tagname，用来新建标签
+            if (str[i] == "\n" || str[i] == undefined) return tg;
+            ++i;
+            var stname = "";
+            while (1) {
+                if (str[i] != ":" && str[i] != "：" && str[i] != "," && str[i] != "，" && str[i] != "、" && str[i] != "\n" && str[i] != undefined) {
+                    stname += str[i];
+                }
+                else {
+                    var std = new Student(stname);
+                    tg.list.push(std);             //将学生名放入标签表中
+                    stname = "";
+                }
+                if (str[i] == "\n" || str[i] == undefined) break;
+                i++;
+            }
+            return tg; //返回建好的标签
+        }
+        function check_stu(str, i) {
+            if (str[i-2] != '\n') return false;
+            if (str[i-1] != '\n') return false;
+                var stname = "";
+                while (str[i] != ":" && str[i] != "：" && str[i] != "," && str[i] != "，" && str[i] != "、" && str[i] != "\n" && str[i] != undefined) {
+                stname += str[i++];
+            }
+                var std = new Student(stname);
+                var stu_skill = "";
+                while (1) {
+                    if (str[i] != undefined && str[i] != "\n") {
+                        stu_skill += str[i];
+                    }
+                    else {
+                        var stusk = new Skill(stu_skill);
+                        std.skill.push(stusk);
+                        stu_skill = "";
+                    }
+                    if (str[i] == "\n" || str[i] == undefined) break;
+                    i++;
+                }
+                return std;
+        }
+        function Get_input(a) {                 //鼠标点击确认后，将框内的文本读入到树中
+            var str = document.getElementById("inputbox").value;
+            document.getElementById("inputbox").value = ""; //获取文本框内容后清空
+            var i = 0;
+            var teachername = "";
+            var line_break = '\n';
+            while (str[i] != undefined) {
+                if (check_tch(str, i)) {            //找“导师：”
+                    i += 3;
+                    while (str[i] != line_break && str[i] != undefined) {
+                        teachername += str[i];
+                        i++;
+                    }
+                    var t = new Teacher(teachername);
+                    teachername = "";               //找到导师名后新建导师对象
+                    a.push(t);                      //放入树中
+                    while (str[i] != undefined) {
+                        if (check_tch(str, i)) {
+                            --i; break;
+                        }
+                        var tg = check_tag(str, i);
+                        if (tg != false) {
+                            t.studentTag.push(tg);  //再将导师后面的标签也放入该导师的student.Tag中
+                            //alert(tg.name);
+                            if (str[i] == line_break) i++;
+                            while (str[i] != line_break && str[i] != undefined)++i;
+                        }
+                        var stu = check_stu(str, i);
+                        i++;
+                    }
+                }
+                i++;
+            }
+            DisplayTable(a);
+        }
+
+        /*
+         *读取文本框内容
+         *导师：张三
+         *2016级博士生：天一、王二、吴五
+         *2015级硕士生：李四、王五、许六
+         *2016级硕士生：刘一、李二、李三
+         *2017级本科生：刘六、琪七、司四
+         *
+         * 处理字符串
+         * 将'：'前的信息作为标签名(即首行第一个信息)
+         * '、'或者'\0'前为姓名（第一个信息之后的信息）
+         *
+         *
+         *
+         */
+
+
+    </script>
+</head>
+<body class="backgraph">
+    <form id="form1">
+        <table border="0">
+            <tr>
+                
+                <td>
+                    <!--<input id="inputbox" name="name" type="text">-->
+                    <textarea class="textbox" placeholder="请输入您的家族树
+格式（如有多个输入，请空两行）：
+导师：张三
+2016级博士生：天一、王二、吴五
+2015级硕士生：李四、王五、许六
+2016级硕士生：刘一、李二、李三
+2017级本科生：刘六、琪七、司四
+
+刘六：JAVA、数学建模
+
+李二：字节跳动、京东云" name="comment" id="inputbox" rows="15" cols="100"></textarea>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <button onclick="Get_input(ptr_obj)">完成</button>
+
+    <div id='html'>
+        <script>
+            var ptr_obj;                    //获取文本后修改ptr_obj并输出
+            var tch = new Array();          //此处的tch为家族树本体
+            DisplayTable(tch);              //采用递归法输出，有变动则刷新重新输出
+        </script>
+    </div>
+</body>
+</html>
