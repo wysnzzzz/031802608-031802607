@@ -1,13 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>MasterTree</title>
     <link rel="stylesheet" type="text/css" href="stylesheet.css" />
     <script type="text/javascript">
-
+        function Skill(name = "skill") {                  //Skill构建函数-学生
+            this.name = name;
+        }
         function Student(name = "student") {                  //Student构建函数-学生
             this.name = name;
+            this.skill = new Array();
+            this.show = false;
         }
         function Tag(name = "tag") {                          //Tag构建函数-标签
             this.name = name;
@@ -31,6 +35,12 @@
             }
             str += "<br>";
             return str;             //需要打印的信息都存在str字符串里
+        }
+        function Click_Student(a,i,j,k)
+        {
+            a[i].studentTag[j].Student[k].show = !a[i].studentTag[j].Student[k].show
+            ptr_obj = a;
+            DisplayTable(a);
         }
         function Click_Tag(a, i, j) {                 //鼠标点到了标签就修改标签展开状态
             a[i].studentTag[j].show = !a[i].studentTag[j].show;
@@ -93,10 +103,6 @@
         function check_tag(str, i) {                //在str【i】这里检查输入的字符串是否为标签格式
             if (str[i] == '\n')++i;
             if (str[i] == undefined) return false;
-            var tagname = "";
-            while (str[i] != ":" && str[i] != "：" && str[i] != "," && str[i] != "，" && str[i] != "、" && str[i] != "\n" && str[i] != undefined) {
-                tagname += str[i++];
-            }
             var tg = new Tag(tagname);          //从输入中提取出的tagname，用来新建标签
             if (str[i] == "\n" || str[i] == undefined) return tg;
             ++i;
@@ -142,6 +148,7 @@
                             if (str[i] == line_break) i++;
                             while (str[i] != line_break && str[i] != undefined)++i;
                         }
+                        var stu = check_stu(str, i);
                         i++;
                     }
                 }
@@ -149,24 +156,6 @@
             }
             DisplayTable(a);
         }
-
-        /*
-         *读取文本框内容
-         *导师：张三
-         *2016级博士生：天一、王二、吴五
-         *2015级硕士生：李四、王五、许六
-         *2016级硕士生：刘一、李二、李三
-         *2017级本科生：刘六、琪七、司四
-         *
-         * 处理字符串
-         * 将'：'前的信息作为标签名(即首行第一个信息)
-         * '、'或者'\0'前为姓名（第一个信息之后的信息）
-         *
-         *
-         *
-         */
-
-
     </script>
 </head>
 <body class="backgraph">
@@ -177,12 +166,16 @@
                 <td>
                     <!--<input id="inputbox" name="name" type="text">-->
                     <textarea class="textbox" placeholder="请输入您的家族树
-格式：
+格式（如有多个输入，请空两行）：
 导师：张三
 2016级博士生：天一、王二、吴五
 2015级硕士生：李四、王五、许六
 2016级硕士生：刘一、李二、李三
-2017级本科生：刘六、琪七、司四" name="comment" id="inputbox" rows="15" cols="100"></textarea>
+2017级本科生：刘六、琪七、司四
+
+刘六：JAVA、数学建模
+
+李二：字节跳动、京东云" name="comment" id="inputbox" rows="15" cols="100"></textarea>
                 </td>
             </tr>
         </table>
